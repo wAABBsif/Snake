@@ -44,15 +44,15 @@ void Snake_Update(Snake* snake)
         }
     }
 
-    if (!isHit)
-    {
-        memcpy(snake->travel + 1, snake->travel, 0xFF);
-        snake->travel[0] = currentTravel;
-    }
-    else
+    if (isHit)
     {
         timer = 10;
         snake->position[snake->travel[0] & 0b00000001] -= snake->travel[0] & 0b00000010 ? 1 : -1;
+    }
+    else
+    {
+        memcpy(snake->travel + 1, snake->travel, 0xFF);
+        snake->travel[0] = currentTravel;
     }
 }
 
@@ -75,7 +75,14 @@ void Snake_Draw(const Snake* const snake)
     memcpy(position, snake->position, 2);
     for (unsigned char i = 0; i < snake->length; i++)
     {
-        DrawRectangle(32 + position[0] * 16, position[1] * 16, 16, 16, RED);
+        Color c = RED;
+        if (i >= snake->length - 1)
+            c = ORANGE;
+        else if (i == 0)
+            c = MAROON;
+        else if (memcmp(&snake->travel[i - 1], &snake->travel[i], 1) != 0)
+            c = YELLOW;
+        DrawRectangle(32 + position[0] * 16, position[1] * 16, 16, 16, c);
         position[snake->travel[i] & 0b00000001] -= snake->travel[i] & 0b00000010 ? 1 : -1;
     }
 }
