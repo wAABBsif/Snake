@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 
-#define UPDATE_TIME (1.0f / 10.0f)
+#define UPDATE_TIME (1.0f / 8.0f)
 
 typedef struct Snake
 {

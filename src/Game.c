@@ -76,7 +76,7 @@ void Draw()
 
 void CheckCollision(GameData* game)
 {
-    if (memcmp(&game->snake.position, &game->orb.position, 2) != 0)
+    if (memcmp(game->snake.position, game->orb.position, 2) != 0)
         return;
 
     game->score++;

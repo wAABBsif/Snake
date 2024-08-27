@@ -7,19 +7,32 @@
 void Snake_Update(Snake* snake)
 {
     static float timer = UPDATE_TIME;
-    static char input = 0b00000000;
+    static char inputBuffer[2];
+    static char inputIndex = sizeof(inputBuffer);
 
-    if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) && snake->travel[0] != 0b00000010)
-        input = 0b00000010;
+    inputIndex--;
 
-    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) && snake->travel[0] != 0b00000000)
-        input = 0b00000000;
+    if (inputIndex < 0)
+        inputIndex = 0;
 
-    if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN) && snake->travel[0] != 0b00000011)
-        input = 0b00000011;
-
-    if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP) && snake->travel[0] != 0b00000001)
-        input = 0b00000001;
+    if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT))
+    {
+        inputBuffer[inputIndex] = 0b00000101;
+    }
+    else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT))
+    {
+        inputBuffer[inputIndex] = 0b00000001;
+    }
+    else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+    {
+        inputBuffer[inputIndex] = 0b00000111;
+    }
+    else if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+    {
+        inputBuffer[inputIndex] = 0b00000011;
+    }
+    else
+        inputIndex++;
 
     timer -= GetFrameTime();
     if (timer > 0)
@@ -31,11 +44,19 @@ void Snake_Update(Snake* snake)
     unsigned char position[2];
     memcpy(position, snake->position, 2);
 
-    if ((currentTravel & 0b00000001) != (input & 0b00000001))
-        currentTravel = input;
+    if (inputBuffer[sizeof(inputBuffer) - 1] & 0b00000001 != 0)
+    {
+        if ((currentTravel & 0b00000001) != (inputBuffer[sizeof(inputBuffer) - 1] >> 1 & 0b00000001))
+            currentTravel = inputBuffer[sizeof(inputBuffer) - 1] >> 1;
+        else if ((currentTravel & 0b00000010) == (inputBuffer[sizeof(inputBuffer) - 1] >> 1 & 0b00000010))
+            currentTravel = inputBuffer[sizeof(inputBuffer) - 1] >> 1;
+    }
 
-    if ((currentTravel & 0b00000010) == (input & 0b00000010))
-        currentTravel = input;
+    if (++inputIndex >= sizeof(inputBuffer))
+        inputIndex = sizeof(inputBuffer);
+
+    memcpy(inputBuffer + 1, inputBuffer, sizeof(inputBuffer) - 1);
+    inputBuffer[0] = 0;
 
     position[currentTravel & 0b00000001] += currentTravel & 0b00000010 ? 1 : -1;
 
@@ -74,7 +95,7 @@ bool Snake_CheckForHit(const Snake* const snake,  unsigned char position[])
 {
     unsigned char* positionBuffer = alloca(snake->length * 2);
     Snake_GetPositions(snake, positionBuffer);
-    for (unsigned char i = 0; i < snake->length; i++)
+    for (unsigned char i = 0; i < snake->length - 1; i++)
     {
         if (memcmp(position, &positionBuffer[i * 2], 2) == 0)
             return true;
