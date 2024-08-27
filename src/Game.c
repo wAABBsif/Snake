@@ -17,13 +17,14 @@ void CheckCollision(GameData* game);
 
 void Game()
 {
-    game = malloc(sizeof(GameData));
+    game = calloc(1,sizeof(GameData));
 
     LoadPlayerData(&game->saveData);
 
-    game->snake.position[0] = 9;
-    game->snake.position[1] = 9;
+    game->snake.position[0] = 13;
+    game->snake.position[1] = 15;
     game->snake.length = 3;
+    game->score = 0;
 
     SetRandomSeed(time(NULL));
 

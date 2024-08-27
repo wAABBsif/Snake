@@ -28,6 +28,8 @@ void Snake_Update(Snake* snake)
     timer = UPDATE_TIME;
 
     unsigned char currentTravel = snake->travel[0];
+    unsigned char position[2];
+    memcpy(position, snake->position, 2);
 
     if ((currentTravel & 0b00000001) != (input & 0b00000001))
         currentTravel = input;
@@ -35,27 +37,25 @@ void Snake_Update(Snake* snake)
     if ((currentTravel & 0b00000010) == (input & 0b00000010))
         currentTravel = input;
 
-    bool isHit = Snake_CheckForHit(snake);
+    position[currentTravel & 0b00000001] += currentTravel & 0b00000010 ? 1 : -1;
+
+    bool isHit = Snake_CheckForHit(snake, position);
 
     for (char i = 0; i < 2; i++)
     {
-        if ((snake->position[i & currentTravel] == 16 && currentTravel & 0b00000010 != 0) || (snake->position[i & currentTravel] == 0 && currentTravel & 0b00000010 == 0))
-        {
+        if (position[i] >= 16)
             isHit = true;
-        }
     }
 
-
-    if (isHit)
+    if (!isHit)
     {
-        timer = 10;
-        snake->length--;
+        memcpy(snake->position, position, 2);
+        memmove(snake->travel + 1, snake->travel, 0xFF);
+        snake->travel[0] = currentTravel;
     }
     else
     {
-        snake->position[currentTravel & 0b00000001] += currentTravel & 0b00000010 ? 1 : -1;
-        memmove(snake->travel + 1, snake->travel, 0xFF);
-        snake->travel[0] = currentTravel;
+        timer = 10;
     }
 }
 
@@ -70,13 +70,13 @@ void Snake_GetPositions(const Snake* const snake, unsigned char* positionBuffer)
     }
 }
 
-char Snake_CheckForHit(const Snake* const snake)
+bool Snake_CheckForHit(const Snake* const snake,  unsigned char position[])
 {
     unsigned char* positionBuffer = alloca(snake->length * 2);
     Snake_GetPositions(snake, positionBuffer);
-    for (unsigned char i = 0; i < snake->length * 2; i += 2)
+    for (unsigned char i = 0; i < snake->length; i++)
     {
-        if (memcmp(snake->position, &positionBuffer[i], 2) == 0)
+        if (memcmp(position, &positionBuffer[i * 2], 2) == 0)
             return true;
     }
     return false;
@@ -115,6 +115,4 @@ void Snake_Draw(const Snake* const snake)
         DrawTexturePro(snake->texture, srcRectangle, (Rectangle){40 + 16 * position[0], 16 * position[1] + 8, 16, 16}, (Vector2){8, 8}, rotation, WHITE);
         position[snake->travel[i] & 0b00000001] -= snake->travel[i] & 0b00000010 ? 1 : -1;
     }
-    int x = 0;
-    x++;
 }

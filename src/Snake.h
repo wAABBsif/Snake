@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 
-#define UPDATE_TIME (1.0f / 8.0f)
+#define UPDATE_TIME (1.0f / 10.0f)
 
 typedef struct Snake
 {
@@ -14,5 +14,5 @@ typedef struct Snake
 
 void Snake_Update(Snake* snake);
 void Snake_GetPositions(const Snake* const snake, unsigned char* positionBuffer);
-char Snake_CheckForHit(const Snake* const snake);
+bool Snake_CheckForHit(const Snake* const snake, unsigned char position[]);
 void Snake_Draw(const Snake* const snake);
