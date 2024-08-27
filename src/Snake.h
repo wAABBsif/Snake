@@ -1,14 +1,18 @@
 #pragma once
+#include "raylib.h"
 
-#define UPDATE_TIME 0.125f
+#define UPDATE_TIME (1.0f / 8.0f)
 
 typedef struct Snake
 {
     unsigned char position[2];
     unsigned char length;
+    Image image;;
+    Texture2D texture;
     unsigned char travel[256];
 } Snake;
 
 void Snake_Update(Snake* snake);
-char CheckForHit(const Snake* const snake);
+void Snake_GetPositions(const Snake* const snake, unsigned char* positionBuffer);
+char Snake_CheckForHit(const Snake* const snake);
 void Snake_Draw(const Snake* const snake);

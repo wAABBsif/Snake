@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "Core.h"
 #include "Drawing.h"
@@ -7,11 +9,11 @@
 
 #define BACKGROUND_COLOR (Color){0x08, 0x08, 0x08, 0x08}
 
-unsigned char score = 0;
 GameData* game;
 
 void Update();
 void Draw();
+void CheckCollision(GameData* game);
 
 void Game()
 {
@@ -19,13 +21,20 @@ void Game()
 
     LoadPlayerData(&game->saveData);
 
-    game->snake.position[0] = 6;
-    game->snake.position[1] = 12;
+    game->snake.position[0] = 9;
+    game->snake.position[1] = 9;
     game->snake.length = 3;
 
+    SetRandomSeed(time(NULL));
+
+    Orb_Spawn(&game->orb, &game->snake);
+
     InitWindow(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale, "Snake");
-    RenderTexture2D target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+    const RenderTexture2D target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
     SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
+
+    game->snake.image = LoadImage("res/snake.png");
+    game->snake.texture = LoadTextureFromImage(game->snake.image);
 
     while (!WindowShouldClose())
     {
@@ -50,13 +59,25 @@ void Game()
 void Update()
 {
     Snake_Update(&game->snake);
+    CheckCollision(game);
 }
 
 void Draw()
 {
     CheckerboardDraw((Vector2){32, 0}, (Vector2){16, 16}, 16, 16, GRAY, DARKGRAY);
     char scoreText[4];
-    ScoreToString(score, scoreText);
+    ScoreToString(game->score, scoreText);
+    Orb_Draw(&game->orb);
     Snake_Draw(&game->snake);
     DrawText(scoreText, 30 - MeasureText(scoreText, 20), 0, 20, RAYWHITE);
+}
+
+void CheckCollision(GameData* game)
+{
+    if (memcmp(&game->snake.position, &game->orb.position, 2) != 0)
+        return;
+
+    game->score++;
+    game->snake.length++;
+    Orb_Spawn(&game->orb, &game->snake);
 }

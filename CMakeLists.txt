@@ -23,14 +23,15 @@ endif()
 
 add_executable(${PROJECT_NAME} src/Main.c
         src/Game.c
-        src/Core.c
         src/Core.h
         src/SaveData.c
         src/SaveData.h
         src/Drawing.c
         src/Drawing.h
         src/Snake.c
-        src/Snake.h)
+        src/Snake.h
+        src/Orb.c
+        src/Orb.h)
 include_directories(include)
 target_link_libraries(${PROJECT_NAME} raylib)
 execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/res
