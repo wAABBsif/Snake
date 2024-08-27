@@ -31,5 +31,5 @@ void Orb_Spawn(Orb* orb, const Snake* snake)
 
 void Orb_Draw(const Orb* const orb)
 {
-    DrawRectangle(32 + orb->position[0] * 16, orb->position[1] * 16, 16, 16, BLUE);
+    DrawTexture(orb->texture, 32 + orb->position[0] * 16, orb->position[1] * 16, WHITE);
 }

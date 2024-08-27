@@ -24,18 +24,19 @@ void Game()
     game->snake.position[0] = 13;
     game->snake.position[1] = 15;
     game->snake.length = 3;
-    game->score = 0;
 
     SetRandomSeed(time(NULL));
-
-    Orb_Spawn(&game->orb, &game->snake);
 
     InitWindow(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale, "Snake");
     const RenderTexture2D target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
     SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
 
+    Orb_Spawn(&game->orb, &game->snake);
+
     game->snake.image = LoadImage("res/snake.png");
     game->snake.texture = LoadTextureFromImage(game->snake.image);
+    game->orb.image = LoadImage("res/orb.png");
+    game->orb.texture = LoadTextureFromImage(game->orb.image);
 
     while (!WindowShouldClose())
     {
