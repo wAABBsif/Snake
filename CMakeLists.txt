@@ -28,10 +28,13 @@ add_executable(${PROJECT_NAME} src/Main.c
         src/SaveData.h
         src/Drawing.c
         src/Drawing.h
-        src/Snake.c
-        src/Snake.h
-        src/Orb.c
-        src/Orb.h)
+        src/Objects/Snake.c
+        src/Objects/Snake.h
+        src/Objects/Orb.c
+        src/Objects/Orb.h
+        src/Core.c
+        src/States/Gameplay.c
+        src/States/Gameplay.h)
 include_directories(include)
 target_link_libraries(${PROJECT_NAME} raylib)
 execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/res

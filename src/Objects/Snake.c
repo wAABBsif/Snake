@@ -2,7 +2,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "Core.h"
+#include "../Core.h"
+
+bool Snake_CheckForHit(const Snake* const snake, unsigned char position[]);
 
 void Snake_Update(Snake* snake)
 {

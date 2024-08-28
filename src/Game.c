@@ -5,46 +5,45 @@
 
 #include "Core.h"
 #include "Drawing.h"
-#include "Snake.h"
+
+#include "Objects/Snake.h"
+#include "Objects/Orb.h"
+
+#include "States/Gameplay.h"
 
 #define BACKGROUND_COLOR (Color){0x08, 0x08, 0x08, 0x08}
 
 GameData* game;
 
-void Update();
-void Draw();
-void CheckCollision(GameData* game);
+void InitializeGameStates();
 
 void Game()
 {
+    SetRandomSeed(time(NULL));
     game = calloc(1,sizeof(GameData));
-
     LoadPlayerData(&game->saveData);
 
-    game->snake.position[0] = 13;
-    game->snake.position[1] = 15;
-    game->snake.length = 3;
-
-    SetRandomSeed(time(NULL));
-
-    InitWindow(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale, "Snake");
     const RenderTexture2D target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
     SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
-
-    Orb_Spawn(&game->orb, &game->snake);
+    SetExitKey(KEY_NULL);
+    InitWindow(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale, "Snake");
 
     game->snake.image = LoadImage("res/snake.png");
     game->snake.texture = LoadTextureFromImage(game->snake.image);
     game->orb.image = LoadImage("res/orb.png");
     game->orb.texture = LoadTextureFromImage(game->orb.image);
 
+    InitializeGameStates();
+    ChangeState(game, GAMESTATE_GAMEPLAY);
+
     while (!WindowShouldClose())
     {
-        Update();
+        game->gameStates[game->stateIndex].Update(game);
         BeginTextureMode(target);
         ClearBackground(BACKGROUND_COLOR);
-        Draw();
+        game->gameStates[game->stateIndex].Draw(game);
         EndTextureMode();
+
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
         DrawTexturePro(target.texture, (Rectangle){ 0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height },
@@ -58,28 +57,9 @@ void Game()
     CloseWindow();
 }
 
-void Update()
+void InitializeGameStates()
 {
-    Snake_Update(&game->snake);
-    CheckCollision(game);
-}
-
-void Draw()
-{
-    CheckerboardDraw((Vector2){32, 0}, (Vector2){16, 16}, 16, 16, GRAY, DARKGRAY);
-    char scoreText[4];
-    ScoreToString(game->score, scoreText);
-    Orb_Draw(&game->orb);
-    Snake_Draw(&game->snake);
-    DrawText(scoreText, 30 - MeasureText(scoreText, 20), 0, 20, RAYWHITE);
-}
-
-void CheckCollision(GameData* game)
-{
-    if (memcmp(game->snake.position, game->orb.position, 2) != 0)
-        return;
-
-    game->score++;
-    game->snake.length++;
-    Orb_Spawn(&game->orb, &game->snake);
+    game->gameStates[GAMESTATE_GAMEPLAY].Start = _Gameplay_Start;
+    game->gameStates[GAMESTATE_GAMEPLAY].Update = _Gameplay_Update;
+    game->gameStates[GAMESTATE_GAMEPLAY].Draw = _Gameplay_Draw;
 }
