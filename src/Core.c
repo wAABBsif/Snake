@@ -2,33 +2,23 @@
 
 #include <stdio.h>
 
-GameData* _gameData = NULL;
+GameData* g_gameData = NULL;
 
-GameData* GameData_Get()
+void SetWindowMode(const int mode)
 {
-    return _gameData;
-}
+    static bool s_isFullscreen = false;
+    static bool s_isBorderless = false;
 
-void GameData_Set(GameData* game)
-{
-    _gameData = game;
-}
-
-void SetWindowMode(const GameData* game, const int mode)
-{
-    static bool isFullscreen = false;
-    static bool isBorderless = false;
-
-    if (mode == WINDOW_MODE_BORDERLESS && !isBorderless)
+    if (mode == WINDOW_MODE_BORDERLESS && !s_isBorderless)
     {
         ToggleBorderlessWindowed();
-        isBorderless = true;
+        s_isBorderless = true;
     }
 
-    if (mode != WINDOW_MODE_BORDERLESS && isBorderless)
+    if (mode != WINDOW_MODE_BORDERLESS && s_isBorderless)
     {
         ToggleBorderlessWindowed();
-        isBorderless = false;
+        s_isBorderless = false;
     }
 
     if (mode == WINDOW_MODE_FULLSCREEN)
@@ -37,20 +27,20 @@ void SetWindowMode(const GameData* game, const int mode)
         SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
     }
 
-    if (mode == WINDOW_MODE_FULLSCREEN && !isFullscreen)
+    if (mode == WINDOW_MODE_FULLSCREEN && !s_isFullscreen)
     {
         ToggleFullscreen();
-        isFullscreen = true;
+        s_isFullscreen = true;
     }
 
-    if (mode != WINDOW_MODE_FULLSCREEN && isFullscreen)
+    if (mode != WINDOW_MODE_FULLSCREEN && s_isFullscreen)
     {
         ToggleFullscreen();
-        isFullscreen = false;
+        s_isFullscreen = false;
     }
 
     if (mode != WINDOW_MODE_FULLSCREEN)
     {
-        SetWindowSize(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale);
+        SetWindowSize(SCREEN_WIDTH * g_gameData->saveData.scale, SCREEN_HEIGHT * g_gameData->saveData.scale);
     }
 }

@@ -1,8 +1,8 @@
 #include "Menu.h"
 
-static const char* const gameName = "Snake";
+static const char* const s_gameName = "Snake";
 
-static const char* const textOptions[] =
+static const char* const s_textOptions[] =
 {
     "Highscore: %i",
     "Play",
@@ -16,55 +16,54 @@ static const char* const textOptions[] =
     "Quit"
 };
 
-static unsigned char menuSelection;
+static unsigned char s_menuSelection;
 
 static unsigned short GetTextPosition(const char* text);
 void DrawSnake(const GameData* game);
 
 void _Menu_Start(const unsigned char prevState)
 {
-    menuSelection = 0;
+    s_menuSelection = 0;
 }
 
 void _Menu_Update(void)
 {
-    GameData* game = GameData_Get();
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
-        menuSelection++;
+        s_menuSelection++;
 
     if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))
-        menuSelection--;
+        s_menuSelection--;
 
-    menuSelection %= 5;
+    s_menuSelection %= 5;
 
     if (IsKeyPressed(KEY_ENTER))
     {
-        switch (menuSelection)
+        switch (s_menuSelection)
         {
             case 0:
-                SavePlayerData(&game->saveData);
+                SavePlayerData(&g_gameData->saveData);
                 States_Change(GAMESTATE_GAMEPLAY);
                 break;
             case 1:
-                if (game->saveData.windowMode == WINDOW_MODE_FULLSCREEN)
+                if (g_gameData->saveData.windowMode == WINDOW_MODE_FULLSCREEN)
                     break;
-                game->saveData.scale++;
-                if (game->saveData.scale > GetMonitorHeight(GetCurrentMonitor()) / SCREEN_HEIGHT)
-                    game->saveData.scale = 1;
-                if (game->saveData.windowMode == WINDOW_MODE_FULLSCREEN)
+                g_gameData->saveData.scale++;
+                if (g_gameData->saveData.scale > GetMonitorHeight(GetCurrentMonitor()) / SCREEN_HEIGHT)
+                    g_gameData->saveData.scale = 1;
+                if (g_gameData->saveData.windowMode == WINDOW_MODE_FULLSCREEN)
                     SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
                 else
-                    SetWindowSize(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale);
+                    SetWindowSize(SCREEN_WIDTH * g_gameData->saveData.scale, SCREEN_HEIGHT * g_gameData->saveData.scale);
                 break;
             case 2:
-                game->saveData.windowMode++;
-                game->saveData.windowMode %= 3;
-                SetWindowMode(game, game->saveData.windowMode);
+                g_gameData->saveData.windowMode++;
+                g_gameData->saveData.windowMode %= 3;
+                SetWindowMode(g_gameData->saveData.windowMode);
                 break;
             case 3:
-                game->saveData.filter++;
-                game->saveData.filter %= 3;
-                SetTextureFilter(game->renderTexture.texture, game->saveData.filter);
+                g_gameData->saveData.filter++;
+                g_gameData->saveData.filter %= 3;
+                SetTextureFilter(g_gameData->renderTexture.texture, g_gameData->saveData.filter);
                 break;
             default:
                 CloseWindow();
@@ -74,20 +73,19 @@ void _Menu_Update(void)
 
 void _Menu_Draw(void)
 {
-    const GameData* game = GameData_Get();
-    DrawText(gameName, (SCREEN_WIDTH - MeasureText(gameName, MENU_TITLE_SIZE)) / 2, MENU_TITLE_POSITION, MENU_TITLE_SIZE, MENU_TITLE_COLOR);
+    DrawText(s_gameName, (SCREEN_WIDTH - MeasureText(s_gameName, MENU_TITLE_SIZE)) / 2, MENU_TITLE_POSITION, MENU_TITLE_SIZE, MENU_TITLE_COLOR);
 
-    const char* highScoreText = TextFormat(textOptions[0], game->saveData.highScore);
-    const char* scaleText = TextFormat(textOptions[2], game->saveData.windowMode == WINDOW_MODE_FULLSCREEN ? 0 : game->saveData.scale);
+    const char* highScoreText = TextFormat(s_textOptions[0], g_gameData->saveData.highScore);
+    const char* scaleText = TextFormat(s_textOptions[2], g_gameData->saveData.windowMode == WINDOW_MODE_FULLSCREEN ? 0 : g_gameData->saveData.scale);
 
     DrawText(highScoreText, GetTextPosition(highScoreText), MENU_TEXT_START_POSITION, MENU_TEXT_SIZE, RAYWHITE);
-    DrawText(textOptions[1], GetTextPosition(textOptions[1]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING, MENU_TEXT_SIZE, menuSelection == 0 ? YELLOW : RAYWHITE);
-    DrawText(scaleText, GetTextPosition(scaleText), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 2, MENU_TEXT_SIZE, menuSelection == 1 ? YELLOW : RAYWHITE);
-    DrawText(textOptions[3 + game->saveData.windowMode], GetTextPosition(textOptions[3 + game->saveData.windowMode]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 3, MENU_TEXT_SIZE, menuSelection == 2 ? YELLOW : RAYWHITE);
-    DrawText(textOptions[6 + game->saveData.filter], GetTextPosition(textOptions[5 + game->saveData.filter]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 4, MENU_TEXT_SIZE, menuSelection == 3 ? YELLOW : RAYWHITE);
-    DrawText(textOptions[9], GetTextPosition(textOptions[9]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 5, MENU_TEXT_SIZE, menuSelection == 4 ? YELLOW : RAYWHITE);
+    DrawText(s_textOptions[1], GetTextPosition(s_textOptions[1]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING, MENU_TEXT_SIZE, s_menuSelection == 0 ? YELLOW : RAYWHITE);
+    DrawText(scaleText, GetTextPosition(scaleText), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 2, MENU_TEXT_SIZE, s_menuSelection == 1 ? YELLOW : RAYWHITE);
+    DrawText(s_textOptions[3 + g_gameData->saveData.windowMode], GetTextPosition(s_textOptions[3 + g_gameData->saveData.windowMode]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 3, MENU_TEXT_SIZE, s_menuSelection == 2 ? YELLOW : RAYWHITE);
+    DrawText(s_textOptions[6 + g_gameData->saveData.filter], GetTextPosition(s_textOptions[5 + g_gameData->saveData.filter]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 4, MENU_TEXT_SIZE, s_menuSelection == 3 ? YELLOW : RAYWHITE);
+    DrawText(s_textOptions[9], GetTextPosition(s_textOptions[9]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 5, MENU_TEXT_SIZE, s_menuSelection == 4 ? YELLOW : RAYWHITE);
 
-    DrawSnake(game);
+    DrawSnake(g_gameData);
 }
 
 static unsigned short GetTextPosition(const char* text)

@@ -8,41 +8,38 @@
 #include "Objects/Snake.h"
 #include "Objects/Orb.h"
 
-GameData* game;
-
 void Game()
 {
     SetRandomSeed(time(NULL));
-    game = calloc(1,sizeof(GameData));
-    GameData_Set(game);
-    LoadPlayerData(&game->saveData);
+    g_gameData = calloc(1,sizeof(GameData));
+    LoadPlayerData(&g_gameData->saveData);
 
-    InitWindow(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale, "Snake");
+    InitWindow(SCREEN_WIDTH * g_gameData->saveData.scale, SCREEN_HEIGHT * g_gameData->saveData.scale, "Snake");
     SetExitKey(KEY_NULL);
-    game->renderTexture = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
-    SetTextureFilter(game->renderTexture.texture, TEXTURE_FILTER_POINT);
-    SetWindowMode(game,game->saveData.windowMode);
+    g_gameData->renderTexture = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+    SetTextureFilter(g_gameData->renderTexture.texture, TEXTURE_FILTER_POINT);
+    SetWindowMode(g_gameData->saveData.windowMode);
 
-    game->snake.image = LoadImage("res/snake.png");
-    game->snake.texture = LoadTextureFromImage(game->snake.image);
-    game->orb.image = LoadImage("res/orb.png");
-    game->orb.texture = LoadTextureFromImage(game->orb.image);
+    g_gameData->snake.image = LoadImage("res/snake.png");
+    g_gameData->snake.texture = LoadTextureFromImage(g_gameData->snake.image);
+    g_gameData->orb.image = LoadImage("res/orb.png");
+    g_gameData->orb.texture = LoadTextureFromImage(g_gameData->orb.image);
 
     States_Initialize();
     States_Change(GAMESTATE_MENU);
 
     while (!WindowShouldClose())
     {
-        game->gameStates[game->stateIndex].Update();
-        BeginTextureMode(game->renderTexture);
+        g_gameData->gameStates[g_gameData->stateIndex].Update();
+        BeginTextureMode(g_gameData->renderTexture);
         ClearBackground(BACKGROUND_COLOR);
-        game->gameStates[game->stateIndex].Draw();
+        g_gameData->gameStates[g_gameData->stateIndex].Draw();
         EndTextureMode();
 
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
-        float scale = (float)GetScreenHeight() / (float)SCREEN_HEIGHT;
-        DrawTexturePro(game->renderTexture.texture, (Rectangle){ 0, 0, SCREEN_WIDTH, -SCREEN_HEIGHT },
+        const float scale = (float)GetScreenHeight() / (float)SCREEN_HEIGHT;
+        DrawTexturePro(g_gameData->renderTexture.texture, (Rectangle){ 0, 0, SCREEN_WIDTH, -SCREEN_HEIGHT },
                            (Rectangle){ (GetScreenWidth() - SCREEN_WIDTH * scale) / 2, 0, SCREEN_WIDTH * scale, GetScreenHeight()},
                            (Vector2){ 0, 0 }, 0.0f, WHITE);
         DrawFPS(4, 4);

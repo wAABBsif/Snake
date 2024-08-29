@@ -10,11 +10,9 @@
 #define WINDOW_MODE_BORDERLESS 1
 #define WINDOW_MODE_FULLSCREEN 2
 
-void SetWindowMode(const GameData* game, const int mode);
-GameData* GameData_Get();
-void GameData_Set(GameData* game);
+void SetWindowMode(const int mode);
 
-extern GameData* _gameData;
+extern GameData* g_gameData;
 
 typedef struct GameData
 {

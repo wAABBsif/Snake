@@ -1,6 +1,6 @@
 #include "End.h"
 
-static const char* const textOptions[] =
+static const char* const s_textOptions[] =
 {
     "Score: %02i",
     "Highscore: %02i",
@@ -8,43 +8,45 @@ static const char* const textOptions[] =
     "Press Enter to Continue"
 };
 
-static float textPositions[sizeof(textOptions) / sizeof(char*)];
-
-static bool hasSetHighScore = false;
+static float s_textPositions[sizeof(s_textOptions) / sizeof(char*)];
+static float s_timeInState;
+static bool s_hasSetHighScore = false;
 
 void End_Initialize()
 {
-    for (int i = 0; i < sizeof(textOptions) / sizeof(char*); i++)
-        textPositions[i] = (SCREEN_WIDTH - MeasureText(TextFormat(textOptions[i], 99), END_TEXT_SIZE)) / 2;
+    for (int i = 0; i < sizeof(s_textOptions) / sizeof(char*); i++)
+        s_textPositions[i] = (SCREEN_WIDTH - MeasureText(TextFormat(s_textOptions[i], 99), END_TEXT_SIZE)) / 2;
 }
 
 void _End_Start(const unsigned char prevState)
 {
-    GameData* game = GameData_Get();
-    hasSetHighScore = game->score > game->saveData.highScore;
+    s_hasSetHighScore = g_gameData->score > g_gameData->saveData.highScore;
 
-    if (hasSetHighScore)
-        game->saveData.highScore = game->score;
+    if (s_hasSetHighScore)
+        g_gameData->saveData.highScore = g_gameData->score;
+
+    s_timeInState = 0;
 }
 
 void _End_Update()
 {
-    GameData* game = GameData_Get();
     if (IsKeyPressed(KEY_ENTER))
     {
-        SavePlayerData(&game->saveData);
+        SavePlayerData(&g_gameData->saveData);
         States_Change(GAMESTATE_MENU);
         return;
     }
+
+    s_timeInState += GetFrameTime();
 }
 
 void _End_Draw()
 {
-    const GameData* game = GameData_Get();
-    DrawText(TextFormat(textOptions[0], game->score), textPositions[0], END_TEXT_START_POSITION, END_TEXT_SIZE, RAYWHITE);
-    DrawText(TextFormat(textOptions[1], game->saveData.highScore), textPositions[1], END_TEXT_START_POSITION + END_TEXT_SPACING * 1, END_TEXT_SIZE, RAYWHITE);
-    if (hasSetHighScore)
-        DrawText(textOptions[2], textPositions[2], END_TEXT_START_POSITION + END_TEXT_SPACING * 2, END_TEXT_SIZE, YELLOW);
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ColorAlpha(BACKGROUND_COLOR, s_timeInState / END_FADE_TIME));
+    DrawText(TextFormat(s_textOptions[0], g_gameData->score), s_textPositions[0], END_TEXT_START_POSITION, END_TEXT_SIZE, ColorAlpha(RAYWHITE, s_timeInState / END_FADE_TIME));
+    DrawText(TextFormat(s_textOptions[1], g_gameData->saveData.highScore), s_textPositions[1], END_TEXT_START_POSITION + END_TEXT_SPACING * 1, END_TEXT_SIZE, ColorAlpha(RAYWHITE, s_timeInState / END_FADE_TIME));
+    if (s_hasSetHighScore)
+        DrawText(s_textOptions[2], s_textPositions[2], END_TEXT_START_POSITION + END_TEXT_SPACING * 2, END_TEXT_SIZE, ColorAlpha(YELLOW, s_timeInState / END_FADE_TIME));
 
-    DrawText(textOptions[3], textPositions[3], END_TEXT_START_POSITION + END_TEXT_SPACING * 4, END_TEXT_SIZE, RED);
+    DrawText(s_textOptions[3], s_textPositions[3], END_TEXT_START_POSITION + END_TEXT_SPACING * 4, END_TEXT_SIZE, ColorAlpha(RED, s_timeInState / END_FADE_TIME));
 }
