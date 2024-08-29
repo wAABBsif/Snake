@@ -14,6 +14,7 @@ void Game()
 {
     SetRandomSeed(time(NULL));
     game = calloc(1,sizeof(GameData));
+    GameData_Set(game);
     LoadPlayerData(&game->saveData);
 
     InitWindow(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale, "Snake");
@@ -27,15 +28,15 @@ void Game()
     game->orb.image = LoadImage("res/orb.png");
     game->orb.texture = LoadTextureFromImage(game->orb.image);
 
-    States_Initialize(game);
-    States_Change(game, GAMESTATE_MENU);
+    States_Initialize();
+    States_Change(GAMESTATE_MENU);
 
     while (!WindowShouldClose())
     {
-        game->gameStates[game->stateIndex].Update(game);
+        game->gameStates[game->stateIndex].Update();
         BeginTextureMode(game->renderTexture);
         ClearBackground(BACKGROUND_COLOR);
-        game->gameStates[game->stateIndex].Draw(game);
+        game->gameStates[game->stateIndex].Draw();
         EndTextureMode();
 
         BeginDrawing();
@@ -44,8 +45,7 @@ void Game()
         DrawTexturePro(game->renderTexture.texture, (Rectangle){ 0, 0, SCREEN_WIDTH, -SCREEN_HEIGHT },
                            (Rectangle){ (GetScreenWidth() - SCREEN_WIDTH * scale) / 2, 0, SCREEN_WIDTH * scale, GetScreenHeight()},
                            (Vector2){ 0, 0 }, 0.0f, WHITE);
-        if (IsKeyDown(KEY_F))
-            DrawFPS(4, 4);
+        DrawFPS(4, 4);
         EndDrawing();
     }
 

@@ -21,13 +21,14 @@ static unsigned char menuSelection;
 static unsigned short GetTextPosition(const char* text);
 void DrawSnake(const GameData* game);
 
-void _Menu_Start(GameData* game, const unsigned char prevState)
+void _Menu_Start(const unsigned char prevState)
 {
     menuSelection = 0;
 }
 
-void _Menu_Update(GameData* game)
+void _Menu_Update(void)
 {
+    GameData* game = GameData_Get();
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
         menuSelection++;
 
@@ -41,7 +42,8 @@ void _Menu_Update(GameData* game)
         switch (menuSelection)
         {
             case 0:
-                States_Change(game, GAMESTATE_GAMEPLAY);
+                SavePlayerData(&game->saveData);
+                States_Change(GAMESTATE_GAMEPLAY);
                 break;
             case 1:
                 if (game->saveData.windowMode == WINDOW_MODE_FULLSCREEN)
@@ -70,12 +72,13 @@ void _Menu_Update(GameData* game)
     }
 }
 
-void _Menu_Draw(const GameData* game)
+void _Menu_Draw(void)
 {
+    const GameData* game = GameData_Get();
     DrawText(gameName, (SCREEN_WIDTH - MeasureText(gameName, MENU_TITLE_SIZE)) / 2, MENU_TITLE_POSITION, MENU_TITLE_SIZE, MENU_TITLE_COLOR);
 
     const char* highScoreText = TextFormat(textOptions[0], game->saveData.highScore);
-    const char* scaleText = TextFormat(textOptions[2], game->saveData.scale);
+    const char* scaleText = TextFormat(textOptions[2], game->saveData.windowMode == WINDOW_MODE_FULLSCREEN ? 0 : game->saveData.scale);
 
     DrawText(highScoreText, GetTextPosition(highScoreText), MENU_TEXT_START_POSITION, MENU_TEXT_SIZE, RAYWHITE);
     DrawText(textOptions[1], GetTextPosition(textOptions[1]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING, MENU_TEXT_SIZE, menuSelection == 0 ? YELLOW : RAYWHITE);

@@ -2,6 +2,18 @@
 
 #include <stdio.h>
 
+GameData* _gameData = NULL;
+
+GameData* GameData_Get()
+{
+    return _gameData;
+}
+
+void GameData_Set(GameData* game)
+{
+    _gameData = game;
+}
+
 void SetWindowMode(const GameData* game, const int mode)
 {
     static bool isFullscreen = false;
@@ -21,12 +33,8 @@ void SetWindowMode(const GameData* game, const int mode)
 
     if (mode == WINDOW_MODE_FULLSCREEN)
     {
-        //this doesn't seem to work?
+        //does not work on some devices?
         SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
-    }
-    else
-    {
-        SetWindowSize(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale);
     }
 
     if (mode == WINDOW_MODE_FULLSCREEN && !isFullscreen)
@@ -39,5 +47,10 @@ void SetWindowMode(const GameData* game, const int mode)
     {
         ToggleFullscreen();
         isFullscreen = false;
+    }
+
+    if (mode != WINDOW_MODE_FULLSCREEN)
+    {
+        SetWindowSize(SCREEN_WIDTH * game->saveData.scale, SCREEN_HEIGHT * game->saveData.scale);
     }
 }

@@ -9,6 +9,6 @@
 #define MENU_TEXT_START_POSITION 96
 #define MENU_TEXT_SPACING 24
 
-void _Menu_Start(GameData* game, const unsigned char prevState);
-void _Menu_Update(GameData* game);
-void _Menu_Draw(const GameData* game);
+void _Menu_Start(const unsigned char prevState);
+void _Menu_Update(void);
+void _Menu_Draw(void);

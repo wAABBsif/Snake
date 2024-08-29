@@ -5,8 +5,9 @@
 
 static void CheckCollision(GameData* game);
 
-void _Gameplay_Start(GameData* game, const unsigned char prevState)
+void _Gameplay_Start(const unsigned char prevState)
 {
+    GameData* game = GameData_Get();
     if (prevState == GAMESTATE_PAUSE)
         return;
 
@@ -18,11 +19,12 @@ void _Gameplay_Start(GameData* game, const unsigned char prevState)
     Orb_Spawn(&game->orb, &game->snake);
 }
 
-void _Gameplay_Update(GameData* game)
+void _Gameplay_Update(void)
 {
+    GameData* game = GameData_Get();
     if (IsKeyPressed(KEY_P) || IsKeyPressed(KEY_PAUSE) || IsKeyPressed(KEY_ESCAPE))
     {
-        States_Change(game, GAMESTATE_PAUSE);
+        States_Change(GAMESTATE_PAUSE);
         return;
     }
 
@@ -30,8 +32,9 @@ void _Gameplay_Update(GameData* game)
     CheckCollision(game);
 }
 
-void _Gameplay_Draw(const GameData* game)
+void _Gameplay_Draw(void)
 {
+    const GameData* game = GameData_Get();
     CheckerboardDraw((Vector2){32, 0}, 16, 16, 16, GRAY, DARKGRAY);
     char scoreText[4];
     ScoreToString(game->score, scoreText);

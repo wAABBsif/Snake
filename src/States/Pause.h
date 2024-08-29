@@ -5,7 +5,7 @@
 #define PAUSE_HEIGHT 64
 #define PAUSE_TEXT_SIZE 30
 
-void Pause_Initialize(GameData* game);
-void _Pause_Start(GameData* game, const unsigned char prevState);
-void _Pause_Update(GameData* game);
-void _Pause_Draw(const GameData* game);
+void Pause_Initialize(void);
+void _Pause_Start(const unsigned char prevState);
+void _Pause_Update(void);
+void _Pause_Draw(void);

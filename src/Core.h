@@ -11,6 +11,10 @@
 #define WINDOW_MODE_FULLSCREEN 2
 
 void SetWindowMode(const GameData* game, const int mode);
+GameData* GameData_Get();
+void GameData_Set(GameData* game);
+
+extern GameData* _gameData;
 
 typedef struct GameData
 {

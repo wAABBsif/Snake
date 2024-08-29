@@ -63,7 +63,7 @@ void Snake_Update(Snake* snake)
     }
     else
     {
-        timer = 10;
+        States_Change(GAMESTATE_END);
     }
 }
 
