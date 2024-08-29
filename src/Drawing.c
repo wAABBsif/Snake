@@ -39,3 +39,11 @@ void ScoreToString(unsigned char score, char* str)
     str[0] = score + '0';
     str[1] = 0;
 }
+
+void DrawFade()
+{
+    const float a = 1 - States_Get()->timeInState / FADE_TIME;
+    if (a < 0)
+        return;
+    DrawTexture(g_gameData->prevRenderTexture.texture, 0, 0, ColorAlpha(WHITE, a));
+}

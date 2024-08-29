@@ -1,10 +1,11 @@
 #include "Menu.h"
+#include "../Drawing.h"
 
 static const char* const s_gameName = "Snake";
 
 static const char* const s_textOptions[] =
 {
-    "Highscore: %i",
+    "Highscore: %02i",
     "Play",
     "Scale: %i",
     "Windowed",
@@ -86,6 +87,7 @@ void _Menu_Draw(void)
     DrawText(s_textOptions[9], GetTextPosition(s_textOptions[9]), MENU_TEXT_START_POSITION + MENU_TEXT_SPACING * 5, MENU_TEXT_SIZE, s_menuSelection == 4 ? YELLOW : RAYWHITE);
 
     DrawSnake(g_gameData);
+    DrawFade();
 }
 
 static unsigned short GetTextPosition(const char* text)

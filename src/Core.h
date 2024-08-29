@@ -16,6 +16,7 @@ extern GameData* g_gameData;
 
 typedef struct GameData
 {
+    RenderTexture2D prevRenderTexture;
     RenderTexture2D renderTexture;
     GameState gameStates[4];
     Snake snake;
@@ -23,6 +24,7 @@ typedef struct GameData
     SaveData saveData;
     unsigned char score;
     unsigned char stateIndex;
+    unsigned char prevStateIndex;
 } GameData;
 
 #define SCREEN_WIDTH 320

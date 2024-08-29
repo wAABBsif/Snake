@@ -29,11 +29,18 @@ void States_Initialize(void)
 
 void States_Change(const unsigned char newState)
 {
-    g_gameData->gameStates[newState].Start(g_gameData->stateIndex);
+    BeginTextureMode(g_gameData->prevRenderTexture);
+    DrawTexture(g_gameData->renderTexture.texture, 0, 0, WHITE);
+    EndTextureMode();
+
+    g_gameData->prevStateIndex = g_gameData->stateIndex;
     g_gameData->stateIndex = newState;
+
+    g_gameData->gameStates[newState].Start();
+    g_gameData->gameStates[newState].timeInState = 0;
 }
 
-GameState States_Get(void)
+GameState* States_Get(void)
 {
-    return g_gameData->gameStates[g_gameData->stateIndex];
+    return &g_gameData->gameStates[g_gameData->stateIndex];
 }

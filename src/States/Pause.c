@@ -1,4 +1,5 @@
 #include "Pause.h"
+#include "../Drawing.h"
 
 static const char* const s_textOptions[] =
 {
@@ -15,7 +16,7 @@ void Pause_Initialize(void)
         s_textPositions[i] = (SCREEN_WIDTH - MeasureText(s_textOptions[i], PAUSE_TEXT_SIZE)) / 2;
 }
 
-void _Pause_Start(const unsigned char prevState)
+void _Pause_Start(void)
 {
     s_menuSelection = 0;
 }
@@ -44,9 +45,9 @@ void _Pause_Update(void)
 
 void _Pause_Draw(void)
 {
-    g_gameData->gameStates[GAMESTATE_GAMEPLAY].Draw();
-    DrawRectangle((SCREEN_WIDTH - PAUSE_WIDTH) / 2, (SCREEN_HEIGHT - PAUSE_HEIGHT) / 2, PAUSE_WIDTH, PAUSE_HEIGHT, BACKGROUND_COLOR);
+    DrawTexture(g_gameData->prevRenderTexture.texture, 0, 0, WHITE);
+    DrawRectangle((SCREEN_WIDTH - PAUSE_WIDTH) / 2, (SCREEN_HEIGHT - PAUSE_HEIGHT) / 2, PAUSE_WIDTH, PAUSE_HEIGHT, ColorAlpha(BACKGROUND_COLOR, States_Get()->timeInState / FADE_TIME));
     const char textHeight = PAUSE_HEIGHT / (sizeof(s_textOptions) / sizeof(char*));
     for (int i = 0; i < sizeof(s_textOptions) / sizeof(char*); i++)
-        DrawText(s_textOptions[i], s_textPositions[i], (SCREEN_HEIGHT - PAUSE_HEIGHT) / 2 + textHeight - PAUSE_TEXT_SIZE + textHeight * i, PAUSE_TEXT_SIZE, i == s_menuSelection ? YELLOW : RAYWHITE);
+        DrawText(s_textOptions[i], s_textPositions[i], (SCREEN_HEIGHT - PAUSE_HEIGHT) / 2 + textHeight - PAUSE_TEXT_SIZE + textHeight * i, PAUSE_TEXT_SIZE, ColorAlpha(i == s_menuSelection ? YELLOW : RAYWHITE, States_Get()->timeInState / FADE_TIME));
 }

@@ -1,4 +1,5 @@
 #include "End.h"
+#include "../Drawing.h"
 
 static const char* const s_textOptions[] =
 {
@@ -9,7 +10,6 @@ static const char* const s_textOptions[] =
 };
 
 static float s_textPositions[sizeof(s_textOptions) / sizeof(char*)];
-static float s_timeInState;
 static bool s_hasSetHighScore = false;
 
 void End_Initialize()
@@ -18,14 +18,12 @@ void End_Initialize()
         s_textPositions[i] = (SCREEN_WIDTH - MeasureText(TextFormat(s_textOptions[i], 99), END_TEXT_SIZE)) / 2;
 }
 
-void _End_Start(const unsigned char prevState)
+void _End_Start(void)
 {
     s_hasSetHighScore = g_gameData->score > g_gameData->saveData.highScore;
 
     if (s_hasSetHighScore)
         g_gameData->saveData.highScore = g_gameData->score;
-
-    s_timeInState = 0;
 }
 
 void _End_Update()
@@ -36,17 +34,15 @@ void _End_Update()
         States_Change(GAMESTATE_MENU);
         return;
     }
-
-    s_timeInState += GetFrameTime();
 }
 
 void _End_Draw()
 {
-    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ColorAlpha(BACKGROUND_COLOR, s_timeInState / END_FADE_TIME));
-    DrawText(TextFormat(s_textOptions[0], g_gameData->score), s_textPositions[0], END_TEXT_START_POSITION, END_TEXT_SIZE, ColorAlpha(RAYWHITE, s_timeInState / END_FADE_TIME));
-    DrawText(TextFormat(s_textOptions[1], g_gameData->saveData.highScore), s_textPositions[1], END_TEXT_START_POSITION + END_TEXT_SPACING * 1, END_TEXT_SIZE, ColorAlpha(RAYWHITE, s_timeInState / END_FADE_TIME));
+    DrawText(TextFormat(s_textOptions[0], g_gameData->score), s_textPositions[0], END_TEXT_START_POSITION, END_TEXT_SIZE, RAYWHITE);
+    DrawText(TextFormat(s_textOptions[1], g_gameData->saveData.highScore), s_textPositions[1], END_TEXT_START_POSITION + END_TEXT_SPACING * 1, END_TEXT_SIZE, RAYWHITE);
     if (s_hasSetHighScore)
-        DrawText(s_textOptions[2], s_textPositions[2], END_TEXT_START_POSITION + END_TEXT_SPACING * 2, END_TEXT_SIZE, ColorAlpha(YELLOW, s_timeInState / END_FADE_TIME));
+        DrawText(s_textOptions[2], s_textPositions[2], END_TEXT_START_POSITION + END_TEXT_SPACING * 2, END_TEXT_SIZE, YELLOW);
 
-    DrawText(s_textOptions[3], s_textPositions[3], END_TEXT_START_POSITION + END_TEXT_SPACING * 4, END_TEXT_SIZE, ColorAlpha(RED, s_timeInState / END_FADE_TIME));
+    DrawText(s_textOptions[3], s_textPositions[3], END_TEXT_START_POSITION + END_TEXT_SPACING * 4, END_TEXT_SIZE, RED);
+    DrawFade();
 }

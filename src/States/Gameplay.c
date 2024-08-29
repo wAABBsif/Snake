@@ -5,9 +5,9 @@
 
 static void CheckCollision(GameData* game);
 
-void _Gameplay_Start(const unsigned char prevState)
+void _Gameplay_Start(void)
 {
-    if (prevState == GAMESTATE_PAUSE)
+    if (g_gameData->prevStateIndex == GAMESTATE_PAUSE)
         return;
 
     g_gameData->snake.position[0] = 13;
@@ -38,6 +38,8 @@ void _Gameplay_Draw(void)
     Orb_Draw(&g_gameData->orb);
     Snake_Draw(&g_gameData->snake);
     DrawText(scoreText, 16 - MeasureText(scoreText, 20) / 2, 10, 20, RAYWHITE);
+    if (g_gameData->prevStateIndex != GAMESTATE_PAUSE)
+        DrawFade();
 }
 
 static void CheckCollision(GameData* game)

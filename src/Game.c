@@ -17,6 +17,8 @@ void Game()
     InitWindow(SCREEN_WIDTH * g_gameData->saveData.scale, SCREEN_HEIGHT * g_gameData->saveData.scale, "Snake");
     SetExitKey(KEY_NULL);
     g_gameData->renderTexture = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_gameData->prevRenderTexture = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+
     SetTextureFilter(g_gameData->renderTexture.texture, TEXTURE_FILTER_POINT);
     SetWindowMode(g_gameData->saveData.windowMode);
 
@@ -27,13 +29,15 @@ void Game()
 
     States_Initialize();
     States_Change(GAMESTATE_MENU);
+	States_Get()->timeInState = 10;
 
     while (!WindowShouldClose())
     {
-        g_gameData->gameStates[g_gameData->stateIndex].Update();
-        BeginTextureMode(g_gameData->renderTexture);
+    	States_Get()->timeInState += GetFrameTime();
+    	States_Get()->Update();
+    	BeginTextureMode(g_gameData->renderTexture);
         ClearBackground(BACKGROUND_COLOR);
-        g_gameData->gameStates[g_gameData->stateIndex].Draw();
+        States_Get()->Draw();
         EndTextureMode();
 
         BeginDrawing();

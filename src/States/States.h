@@ -10,11 +10,12 @@ typedef struct GameData GameData;
 
 typedef struct GameState
 {
-    void (*Start)(const unsigned char prevState);
+    void (*Start)();
     void (*Update)();
     void (*Draw)();
+    float timeInState;
 } GameState;
 
 void States_Initialize(void);
 void States_Change(const unsigned char newState);
-GameState States_Get(void);
+GameState* States_Get(void);
