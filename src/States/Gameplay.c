@@ -38,8 +38,7 @@ void _Gameplay_Draw(void)
     Orb_Draw(&g_gameData->orb);
     Snake_Draw(&g_gameData->snake);
     DrawText(scoreText, 16 - MeasureText(scoreText, 20) / 2, 10, 20, RAYWHITE);
-    if (g_gameData->prevStateIndex != GAMESTATE_PAUSE)
-        DrawFade();
+    DrawFade();
 }
 
 static void CheckCollision(GameData* game)
