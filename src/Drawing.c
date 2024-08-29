@@ -1,14 +1,14 @@
 #include "Drawing.h"
 
-void CheckerboardDraw(const Vector2 position, const Vector2 squareSize, const char countX, const char countY, const Color color1, const Color color2)
+void CheckerboardDraw(const Vector2 position, const unsigned char squareSize, const char countX, const char countY, const Color color1, const Color color2)
 {
-    bool drawSecondColor = 0;
+    bool drawSecondColor = false;
     for (char i = 0; i < countX; i++)
     {
         for (char j = 0; j < countY; j++)
         {
             drawSecondColor = !drawSecondColor;
-            DrawRectangle(position.x + squareSize.x * i, position.y + squareSize.y * j, squareSize.x, squareSize.y, drawSecondColor ? color2 : color1);
+            DrawRectangle(position.x + squareSize * i, position.y + squareSize * j, squareSize, squareSize, drawSecondColor ? color2 : color1);
         }
         drawSecondColor = !drawSecondColor;
     }
@@ -24,6 +24,7 @@ void ScoreToString(unsigned char score, char* str)
         score -= score / 10 * 10;
         str[2] = score + '0';
         str[3] = 0;
+        return;
     }
 
     if (score > 9)
