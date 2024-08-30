@@ -1,5 +1,6 @@
 #include "End.h"
 #include "../Drawing.h"
+#include "../Sound.h"
 
 static const char* const s_textOptions[] =
 {
@@ -23,7 +24,10 @@ void _End_Start(void)
     s_hasSetHighScore = g_gameData->score > g_gameData->saveData.highScore;
 
     if (s_hasSetHighScore)
+    {
         g_gameData->saveData.highScore = g_gameData->score;
+        Sound_Play("highScore.wav");
+    }
 }
 
 void _End_Update()
@@ -32,6 +36,7 @@ void _End_Update()
     {
         SavePlayerData(&g_gameData->saveData);
         States_Change(GAMESTATE_MENU);
+        Sound_Play("menuEnter.wav");
         return;
     }
 }
@@ -44,5 +49,5 @@ void _End_Draw()
         DrawText(s_textOptions[2], s_textPositions[2], END_TEXT_START_POSITION + END_TEXT_SPACING * 2, END_TEXT_SIZE, YELLOW);
 
     DrawText(s_textOptions[3], s_textPositions[3], END_TEXT_START_POSITION + END_TEXT_SPACING * 4, END_TEXT_SIZE, RED);
-    DrawFade();
+    Drawing_Fade();
 }

@@ -8,3 +8,4 @@ void Pause_Initialize(void);
 void _Pause_Start(void);
 void _Pause_Update(void);
 void _Pause_Draw(void);
+void Pause_Free(void);

@@ -8,8 +8,6 @@ typedef struct Snake
     unsigned char position[2];
     unsigned char length;
     unsigned char travel[253];
-    Image image;;
-    Texture2D texture;
 } Snake;
 
 void Snake_Update(Snake* snake);

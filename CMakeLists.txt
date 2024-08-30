@@ -42,7 +42,9 @@ add_executable(${PROJECT_NAME} src/Main.c
         src/States/Menu.h
         src/Core.c
         src/States/End.c
-        src/States/End.h)
+        src/States/End.h
+        src/Sound.c
+        src/Sound.h)
 include_directories(include)
 target_link_libraries(${PROJECT_NAME} raylib)
 execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/res

@@ -1,8 +1,10 @@
-#include "Snake.h"
-
 #include <stdlib.h>
 #include <string.h>
+
+#include "Snake.h"
 #include "../Core.h"
+#include "../Drawing.h"
+#include "../Sound.h"
 
 bool Snake_CheckForHit(const Snake* const snake, unsigned char position[]);
 
@@ -38,6 +40,9 @@ void Snake_Update(Snake* snake)
 
     if (s_inputBuffer[sizeof(s_inputBuffer) - 1] & 0b00000001 != 0)
     {
+        if (s_inputBuffer[sizeof(s_inputBuffer) - 1] >> 1 != currentTravel)
+            Sound_Play("snakeMove.wav");
+
         if ((currentTravel & 0b00000001) != (s_inputBuffer[sizeof(s_inputBuffer) - 1] >> 1 & 0b00000001))
             currentTravel = s_inputBuffer[sizeof(s_inputBuffer) - 1] >> 1;
         else if ((currentTravel & 0b00000010) == (s_inputBuffer[sizeof(s_inputBuffer) - 1] >> 1 & 0b00000010))
@@ -58,11 +63,12 @@ void Snake_Update(Snake* snake)
     if (!isHit)
     {
         memcpy(snake->position, position, 2);
-        memmove(snake->travel + 1, snake->travel, 0xFF);
+        memcpy(snake->travel + 1, snake->travel, 252);
         snake->travel[0] = currentTravel;
     }
     else
     {
+        Sound_Play("snakeHit.wav");
         States_Change(GAMESTATE_END);
     }
 }
@@ -94,6 +100,10 @@ bool Snake_CheckForHit(const Snake* const snake,  unsigned char position[])
 
 void Snake_Draw(const Snake* const snake)
 {
+    static Texture2D* s_texture = NULL;
+    if (s_texture == NULL)
+        s_texture = Drawing_GetTexture("snake.png");
+
     unsigned char position[2];
     memcpy(position, snake->position, 2);
 
@@ -124,7 +134,7 @@ void Snake_Draw(const Snake* const snake)
         else
             index = 1;
         const Rectangle srcRectangle = (Rectangle){(index & 0b00000001) * 16, ((index & 0b00000010) >> 1) * 16, mirroredX ? -16 : 16, mirroredY ? -16 : 16};
-        DrawTexturePro(snake->texture, srcRectangle, (Rectangle){40 + 16 * position[0], 16 * position[1] + 8, 16, 16}, (Vector2){8, 8}, rotation, WHITE);
+        DrawTexturePro(*s_texture, srcRectangle, (Rectangle){40 + 16 * position[0], 16 * position[1] + 8, 16, 16}, (Vector2){8, 8}, rotation, WHITE);
         position[snake->travel[i] & 0b00000001] -= snake->travel[i] & 0b00000010 ? 1 : -1;
     }
 }

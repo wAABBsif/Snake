@@ -1,7 +1,7 @@
 #include <string.h>
-
 #include "Gameplay.h"
 #include "../Drawing.h"
+#include "../Sound.h"
 
 static void CheckCollision(GameData* game);
 
@@ -32,13 +32,13 @@ void _Gameplay_Update(void)
 
 void _Gameplay_Draw(void)
 {
-    CheckerboardDraw((Vector2){32, 0}, 16, 16, 16, GRAY, DARKGRAY);
+    Drawing_Checkerboard((Vector2){32, 0}, 16, 16, 16, GRAY, DARKGRAY);
     char scoreText[4];
-    ScoreToString(g_gameData->score, scoreText);
+    Drawing_ScoreToString(g_gameData->score, scoreText);
     Orb_Draw(&g_gameData->orb);
     Snake_Draw(&g_gameData->snake);
     DrawText(scoreText, 16 - MeasureText(scoreText, 20) / 2, 10, 20, RAYWHITE);
-    DrawFade();
+    Drawing_Fade();
 }
 
 static void CheckCollision(GameData* game)
@@ -49,4 +49,5 @@ static void CheckCollision(GameData* game)
     game->score++;
     game->snake.length++;
     Orb_Spawn(&game->orb, &game->snake);
+    Sound_Play("orbCollect.wav");
 }

@@ -1,7 +1,8 @@
-#include "Orb.h"
-#include "raylib.h"
 #include <stdlib.h>
 #include <string.h>
+#include "../Drawing.h"
+#include "raylib.h"
+#include "Orb.h"
 #include "Snake.h"
 
 void Orb_Spawn(Orb* orb, const Snake* snake)
@@ -31,5 +32,8 @@ void Orb_Spawn(Orb* orb, const Snake* snake)
 
 void Orb_Draw(const Orb* const orb)
 {
-    DrawTexture(orb->texture, 32 + orb->position[0] * 16, orb->position[1] * 16, WHITE);
+    static Texture2D* s_texture = NULL;
+    if (s_texture == NULL)
+        s_texture = Drawing_GetTexture("orb.png");
+    DrawTexture(*s_texture, 32 + orb->position[0] * 16, orb->position[1] * 16, WHITE);
 }

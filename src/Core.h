@@ -10,21 +10,20 @@
 #define WINDOW_MODE_BORDERLESS 1
 #define WINDOW_MODE_FULLSCREEN 2
 
-void SetWindowMode(const int mode);
-
 extern GameData* g_gameData;
 
 typedef struct GameData
 {
+	GameState gameStates[GAMESTATE_COUNT];
+	Snake snake;
+	Orb orb;
+	SaveData saveData;
+	unsigned char score;
+	unsigned char stateIndex;
+	unsigned char prevStateIndex;
+	bool isExitWindowRequested;
     RenderTexture2D prevRenderTexture;
     RenderTexture2D renderTexture;
-    GameState gameStates[4];
-    Snake snake;
-    Orb orb;
-    SaveData saveData;
-    unsigned char score;
-    unsigned char stateIndex;
-    unsigned char prevStateIndex;
 } GameData;
 
 #define SCREEN_WIDTH 320
