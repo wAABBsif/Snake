@@ -24,7 +24,7 @@ static unsigned char s_menuSelection;
 static unsigned short GetTextPosition(const char* text);
 void DrawSnake(const GameData* game);
 
-void _Menu_Start(const unsigned char prevState)
+void _Menu_Start()
 {
     s_menuSelection = 0;
 }
